@@ -5,7 +5,7 @@ Instructions for building and modifying WebMCP demo applications in `demos/`.
 ## Setup & Running Demos
 
 - **Build all bundled demos** (React/Vite & Angular): `../build-demos.sh` (from repo root: `./build-demos.sh`).
-- **Static demos** (`coffee-shop`, `doors`, `explainer`, `french-bistro`, `order-tracking`, `page-agent`, `pizza-maker`, `real-estate-map`, `ticket-booking`): No build step; serve from the repository root so `../shared/webmcp-polyfill.js` resolves (e.g., `npx serve .`).
+- **Static demos** (`coffee-shop`, `doors`, `explainer`, `french-bistro`, `order-tracking`, `page-agent`, `pizza-maker`, `real-estate-map`, `ticket-booking`): No build step; serve from the repository root (e.g., `npx serve .`).
 - **Bundled demos** (`analytics-dashboard`, `hotel-chain`, `leather-bag`, `react-flightsearch`, `smart-home`, `sport-shop-angular`, `webmcp-maze`): Run `npm ci && npm run dev` (or `npm start` for Angular demos) inside `demos/<demo-name>`.
 
 ## Web & WebMCP Guidance (`modern-web-guidance`)
@@ -29,8 +29,8 @@ Before building or modifying demos, UI components, HTML/CSS, or WebMCP tools, qu
   - Use `useWebMCP` from [`use-webmcp-tool`](https://github.com/GoogleChromeLabs/use-webmcp-tool) for automatic tool registration and `AbortController` cleanup (see [smart-home/src/context/useWebMCPTools.js](smart-home/src/context/useWebMCPTools.js)).
 - **Angular Demos**:
   - Use `declareExperimentalWebMcpTool` from `@angular/core` for imperative tools (see [sport-shop-angular/src/app/services/webmcp.service.ts](sport-shop-angular/src/app/services/webmcp.service.ts)) or `experimentalWebMcpTool` in Angular Signal Forms (`@angular/forms/signals`, see [leather-bag/src/app/pages/product/product.ts](leather-bag/src/app/pages/product/product.ts)).
-- **Shared Polyfill & Types**:
-  - Include `<script src="../shared/webmcp-polyfill.js"></script>` in static demos and pair `:tool-form-active` / `:tool-submit-active` CSS selectors with `.tool-form-active` / `.tool-submit-active` fallback classes.
+- **Native WebMCP & Types**:
+  - Demos use the browser's native WebMCP implementation; do not load the shared polyfill.
   - Reference [shared/types/webmcp-declarative.d.ts](shared/types/webmcp-declarative.d.ts) in TypeScript projects for `toolname`, `tooldescription`, `toolparamdescription`, and `toolautosubmit` attribute types.
 - **GitHub Pages Base Paths & Routing**:
   - Include the WebMCP Origin Trial `<meta http-equiv="origin-trial" ...>` tag in `index.html`.

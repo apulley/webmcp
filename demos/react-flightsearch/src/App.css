@@ -325,6 +325,70 @@ button {
   animation: fadeInOutBottom 3s ease-in-out;
 }
 
+.tool-execution-log {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 1100;
+  width: min(360px, calc(100vw - 32px));
+  max-height: 240px;
+  overflow: auto;
+  padding: 12px;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  background: #111827;
+  color: #f9fafb;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.tool-execution-log-title {
+  display: block;
+  margin: 0 0 6px;
+  font: 600 13px/1.5 system-ui, sans-serif;
+}
+
+.tool-execution-log-api {
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.tool-execution-log-api.available {
+  color: #86efac;
+}
+
+.tool-execution-log-api.unavailable {
+  color: #fca5a5;
+}
+
+.tool-execution-log-registration {
+  overflow-wrap: anywhere;
+}
+
+.tool-execution-log-empty {
+  color: #cbd5e1;
+}
+
+.tool-execution-log-list {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tool-execution-log-started {
+  color: #fde68a;
+}
+
+.tool-execution-log-succeeded {
+  color: #86efac;
+}
+
+.tool-execution-log-failed {
+  color: #fca5a5;
+}
+
 @keyframes fadeInOutBottom {
   0% {
     opacity: 0;

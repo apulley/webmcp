@@ -12,6 +12,7 @@ import {
 } from "react-router-dom";
 import FlightSearch from "./components/FlightSearch";
 import FlightResults from "./components/FlightResults";
+import ToolExecutionLog from "./components/ToolExecutionLog";
 import "./App.css";
 
 export interface SearchParams {
@@ -89,6 +90,7 @@ export default function App() {
   return (
     <Router>
       <AppContent />
+      <ToolExecutionLog />
     </Router>
   );
 }

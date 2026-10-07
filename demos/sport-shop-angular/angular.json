@@ -27,9 +27,6 @@
             ],
             "styles": [
               "src/tailwind-output.css"
-            ],
-            "scripts": [
-              "../shared/webmcp-polyfill.js"
             ]
           },
           "configurations": {

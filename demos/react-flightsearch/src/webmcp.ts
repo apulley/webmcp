@@ -1,4 +1,126 @@
+/**
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { useEffect } from "react";
+import {
+  useWebMCP,
+  type WebMCPOptions,
+  type WebMCPState,
+} from "use-webmcp-tool";
 import type { Flight } from "./data/flights";
+
+export const TOOL_EXECUTION_EVENT = "webmcp-tool-execution";
+export const TOOL_REGISTRATION_EVENT = "webmcp-tool-registration";
+
+export interface ToolExecutionLogEntry {
+  id: number;
+  toolName: string;
+  status: "started" | "succeeded" | "failed";
+  timestamp: number;
+  input?: unknown;
+  error?: string;
+}
+
+export interface ToolRegistrationLogEntry {
+  toolName: string;
+  enabled: boolean;
+  apiAvailable: boolean;
+  registered: boolean;
+  timestamp: number;
+  error?: string;
+}
+
+export function isModelContextAvailable(): boolean {
+  return (
+    typeof document !== "undefined" &&
+    "modelContext" in document &&
+    Boolean(document.modelContext)
+  );
+}
+
+export function useLoggedWebMCP<Args, Result>(
+  options: WebMCPOptions<Args, Result>,
+): WebMCPState {
+  const state = useWebMCP(options);
+  const enabled = options.enabled ?? true;
+
+  useEffect(() => {
+    const reportStatus = (registered: boolean) => {
+      window.dispatchEvent(
+        new CustomEvent<ToolRegistrationLogEntry>(TOOL_REGISTRATION_EVENT, {
+          detail: {
+            toolName: options.name,
+            enabled,
+            apiAvailable: isModelContextAvailable(),
+            registered,
+            timestamp: Date.now(),
+            ...(state.error ? { error: state.error.message } : {}),
+          },
+        }),
+      );
+    };
+
+    reportStatus(state.registered);
+    return () => reportStatus(false);
+  }, [enabled, options.name, state.error, state.registered]);
+
+  return state;
+}
+
+let nextExecutionLogId = 0;
+
+function emitToolExecution(
+  entry: Omit<ToolExecutionLogEntry, "id" | "timestamp">,
+): void {
+  window.dispatchEvent(
+    new CustomEvent<ToolExecutionLogEntry>(TOOL_EXECUTION_EVENT, {
+      detail: { ...entry, id: nextExecutionLogId++, timestamp: Date.now() },
+    }),
+  );
+}
+
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+function withExecutionLogging<Args extends unknown[], Result>(
+  toolName: string,
+  execute: (...args: Args) => Result,
+): (...args: Args) => Result {
+  return (...args: Args): Result => {
+    const input = args[0];
+    emitToolExecution({ toolName, status: "started", input });
+
+    try {
+      const result = execute(...args);
+      if (result instanceof Promise) {
+        result.then(
+          () => emitToolExecution({ toolName, status: "succeeded", input }),
+          (error: unknown) =>
+            emitToolExecution({
+              toolName,
+              status: "failed",
+              input,
+              error: getErrorMessage(error),
+            }),
+        );
+      } else {
+        emitToolExecution({ toolName, status: "succeeded", input });
+      }
+      return result;
+    } catch (error) {
+      emitToolExecution({
+        toolName,
+        status: "failed",
+        input,
+        error: getErrorMessage(error),
+      });
+      throw error;
+    }
+  };
+}
 
 function dispatchAndWait(
     eventName: string,
@@ -42,7 +164,7 @@ export function listFlights(): Array<Flight> {
 }
 
 export const listFlightsTool = {
-  execute: listFlights,
+  execute: withExecutionLogging("listFlights", listFlights),
   name: "listFlights",
   description: "Returns the flights currently visible on the results page after all filters have been applied.",
   inputSchema: {},
@@ -118,7 +240,7 @@ export async function setFilters(filters: Filters): Promise<string> {
 }
 
 export const setFiltersTool = {
-  execute: setFilters,
+  execute: withExecutionLogging("setFilters", setFilters),
   name: "setFilters",
   description: "Sets the filters for flights.",
   inputSchema: {
@@ -205,7 +327,7 @@ export async function resetFilters(): Promise<string> {
 }
 
 export const resetFiltersTool = {
-  execute: resetFilters,
+  execute: withExecutionLogging("resetFilters", resetFilters),
   name: "resetFilters",
   description: "Resets all filters to their default values.",
   inputSchema: {},
@@ -242,7 +364,7 @@ export async function searchFlights(p: unknown): Promise<string> {
 }
 
 export const searchFlightsTool = {
-  execute: searchFlights,
+  execute: withExecutionLogging("searchFlights", searchFlights),
   name: "searchFlights",
   description: "Searches for flights with the given parameters.",
   inputSchema: {

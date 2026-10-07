@@ -4,7 +4,7 @@
 
 This project demonstrates a **WebMCP** implementation for a restaurant reservation system. It allows an AI agent to interact directly with a web-based booking form, validating and submitting data on behalf of the user using declarative tool definitions.
 
-It imports the [WebMCP Polyfill](../shared/webmcp-polyfill.js) so that WebMCP is fully simulated in browsers that do not support it yet natively.
+This demo requires a browser that supports WebMCP natively; it does not load a polyfill.
 
 ## 🛠️ How It Works
 

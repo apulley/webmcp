@@ -48,7 +48,7 @@ WebMCP Sports registers 13 in-browser tools categorized by scope:
 ## 🛠 Tech Stack
 
 - **Framework**: Angular 22 (Signals & Standalone Components)
-- **AI & Protocol**: Google GenAI SDK (`@google/genai`), WebMCP (`document.modelContext`), [WebMCP Polyfill](../shared/webmcp-polyfill.js)
+- **AI & Protocol**: Google GenAI SDK (`@google/genai`), WebMCP (`document.modelContext`). This demo requires native browser support and does not load a polyfill.
 - **Styling**: Vanilla CSS & TailwindCSS v4
 - **Build Tool**: Angular CLI / Vite
 - **Testing**: Vitest
@@ -107,5 +107,4 @@ Run unit tests with Vitest:
 ```bash
 npm test
 ```
-
 

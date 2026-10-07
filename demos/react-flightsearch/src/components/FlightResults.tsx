@@ -4,7 +4,6 @@
  */
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { useWebMCP } from "use-webmcp-tool";
 import Header from "./Header";
 import Toast from "./Toast";
 import FilterPanel from "./FilterPanel";
@@ -19,6 +18,7 @@ import {
   resetFiltersTool,
   searchFlightsTool,
   setCurrentFlights,
+  useLoggedWebMCP,
 } from "../webmcp";
 import "../App.css";
 
@@ -43,10 +43,10 @@ export default function FlightResults({
   searchParams,
   setSearchParams,
 }: FlightResultsProps) {
-  useWebMCP(listFlightsTool);
-  useWebMCP(setFiltersTool);
-  useWebMCP(resetFiltersTool);
-  useWebMCP(searchFlightsTool);
+  useLoggedWebMCP(listFlightsTool);
+  useLoggedWebMCP(setFiltersTool);
+  useLoggedWebMCP(resetFiltersTool);
+  useLoggedWebMCP(searchFlightsTool);
 
   const routeFlights = useMemo(
     () => getFlights(searchParams.origin, searchParams.destination),
